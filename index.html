@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Froggy and Jumper Explore the World</title>
+  <link rel="icon" type="image/png" href="globe.png">
+  <script>
+    (function () {
+      var t = localStorage.getItem("fj_theme") ||
+        (window.matchMedia && matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+      document.documentElement.setAttribute("data-theme", t);
+    })();
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;500;600;700&family=Instrument+Serif:ital@0;1&family=Fraunces:opsz,wght@9..144,400;600&family=Lora:ital,wght@0,400;0,600;1,400&family=Playfair+Display:wght@400;600&family=DM+Serif+Display&family=Syne:wght@400;600&family=Fredoka:wght@400;500&family=Caveat:wght@400;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- LOGIN -->
+  <main id="login">
+    <section class="login-card">
+      <img class="logo" src="globe.png" alt="">
+      <h1>Froggy <em>&amp;</em> Jumper</h1>
+      <p class="sub">Explore the world</p>
+      <form id="login-form">
+        <label>Who is this?</label>
+        <div class="seg" id="who-seg">
+          <button type="button" data-who="Jumper">Jumper</button>
+          <button type="button" data-who="Froggy">Froggy</button>
+        </div>
+        <label for="pw">Password</label>
+        <input id="pw" type="password" autocomplete="current-password" required autofocus>
+        <button type="submit" class="primary">Open</button>
+      </form>
+      <p id="login-error" class="error" hidden></p>
+    </section>
+  </main>
+
+  <!-- APP -->
+  <div id="app" hidden>
+    <header id="appbar">
+      <img class="logo small" src="globe.png" alt="">
+      <span class="app-name">Froggy and Jumper Explore the World</span>
+      <div id="presence" hidden></div>
+      <span id="presence-text"></span>
+      <span class="grow"></span>
+      <button id="theme-toggle" class="flat">Dark mode</button>
+      <button id="logout" class="flat">Log out</button>
+    </header>
+
+    <nav id="menubar">
+      <button data-menu="file">File</button>
+      <button data-menu="edit">Edit</button>
+      <button data-menu="view">View</button>
+      <button data-menu="insert">Insert</button>
+      <button data-menu="format">Format</button>
+      <button data-menu="tools">Tools</button>
+      <span class="grow"></span>
+      <span id="sync-status"></span>
+    </nav>
+
+    <div id="banner" hidden></div>
+
+    <div id="toolbar" class="toolbar">
+      <button data-act="undo" data-icon="undo" title="Undo (Ctrl+Z)"></button>
+      <button data-act="redo" data-icon="redo" title="Redo (Ctrl+Y)"></button>
+      <span class="sep"></span>
+      <button id="style-btn" class="dd w1" title="Text style"><span id="style-label">Normal text</span><i class="chev"></i></button>
+      <button id="font-btn" class="dd w2" title="Font"><span id="font-label">Bricolage Grotesque</span><i class="chev"></i></button>
+      <span class="size">
+        <button data-act="size-" title="Decrease font size">&minus;</button>
+        <input id="size" value="11" inputmode="numeric" title="Font size">
+        <button data-act="size+" title="Increase font size">+</button>
+      </span>
+      <span class="sep"></span>
+      <button id="btn-bold" data-act="bold" title="Bold (Ctrl+B)"><b>B</b></button>
+      <button id="btn-italic" data-act="italic" title="Italic (Ctrl+I)"><i>I</i></button>
+      <button id="btn-underline" data-act="underline" title="Underline (Ctrl+U)"><u>U</u></button>
+      <button id="color-btn" data-icon="textcolor" title="Text colour"><i class="bar" id="color-bar"></i></button>
+      <button id="hl-btn" data-icon="highlight" title="Highlight colour"><i class="bar" id="hl-bar"></i></button>
+      <span class="sep"></span>
+      <button data-act="link" data-icon="link" title="Insert link (Ctrl+K)"></button>
+      <button data-act="comment" data-icon="comment" title="Comment on selection"></button>
+      <span class="sep"></span>
+      <button id="align-btn" class="dd" data-icon="align-left" title="Align"><i class="chev"></i></button>
+      <button id="list-btn" class="dd" data-icon="bullets" title="Lists"><i class="chev"></i></button>
+      <button id="spacing-btn" class="dd" data-icon="spacing" title="Line spacing"><i class="chev"></i></button>
+      <span class="sep"></span>
+      <button data-act="clear" data-icon="clear" title="Clear formatting"></button>
+    </div>
+
+    <div id="body">
+      <aside id="sidebar">
+        <button id="new-tab" class="flat">+ New tab</button>
+        <nav id="tabs"></nav>
+      </aside>
+
+      <section id="canvas">
+        <button id="menu-btn" class="flat">Tabs</button>
+        <p id="empty" hidden>No tabs yet. Create one with "+ New tab".</p>
+        <div id="sheet" hidden>
+          <article id="page">
+            <input id="doc-title" placeholder="Untitled" maxlength="60">
+            <div id="embed-wrap" hidden></div>
+            <div id="editor" contenteditable="true" spellcheck="true"></div>
+            <div id="remote-caret" hidden><span></span></div>
+          </article>
+          <aside id="comments" hidden>
+            <form id="composer" hidden>
+              <textarea id="comment-text" rows="3" placeholder="Write a comment"></textarea>
+              <div class="row">
+                <span class="grow"></span>
+                <button type="button" id="comment-cancel" class="small">Cancel</button>
+                <button type="submit" class="primary tiny">Comment</button>
+              </div>
+            </form>
+            <div id="comment-list"></div>
+          </aside>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+  <script src="config.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
